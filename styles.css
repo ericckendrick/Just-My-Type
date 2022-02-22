@@ -1,6 +1,6 @@
 * {
   margin: 0;
-  padding: 0;	
+  padding: 0;
 }
 
 #prompt-container {
@@ -22,7 +22,7 @@
 }
 
 #target-letter {
-  font-size: 38px;  
+  font-size: 38px;
 }
 
 .keys-row {
@@ -34,9 +34,9 @@
   font-size: 20px;
 }
 .glyphicon-ok {
-  color: #1DA237
+  color: #1da237;
 }
 
 .glyphicon-remove {
-  color : #CD2626
+  color: #cd2626;
 }
