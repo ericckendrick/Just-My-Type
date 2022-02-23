@@ -13,6 +13,11 @@ let $charLetter = $sentence.substring($charNum, $charNum + 1) ;
 //--set yellow block div to var and set its position to 0 for px index pos --//
 let $highlightBlock = $('#yellow-block');
 let $highlightPos = 0;
+let $startDate;
+let $startTime;
+ //---set is timing to default false ---//
+let $isTiming = false;
+let $mistakesNum = 0;
 
 $(document).ready(function() {
     //--- hide upper keyboard---//
@@ -50,11 +55,10 @@ $(document).ready(function() {
 
     //---Keypress function for wpm calc and correct/incorrect key --//
     $(document).keypress(function(e) {
-        //---set is timing to default false ---//
-        let $isTiming = false;
-        if ($isTiming === false) {
+        if ($isTiming == false) {
             //--- new time starter ---//
-            $startTime = new Date().valueOf();
+            $startDate = new Date();
+            $startTime = $startDate.valueOf();
             //---- set to true ---//
             $isTiming = true;
         }
@@ -68,15 +72,56 @@ $(document).ready(function() {
             $highlightPos += 17;
             $($highlightBlock).css('margin-left', `${$highlightPos}px`);
 
-            //---ad char ---//
+            //---add char ---//
             $charNum++;
             //---show next char ---//
             $charLetter = $sentence.substring($charNum, $charNum + 1);
             $('#target-letter').text($charLetter);
             
+            //---If statement for complete sentence ---//
+            if ($charNum === $sentence.length) {
+                $sentenceIdx ++;
+                //---if all have been completed, end time and calc wpm --//
+                if ($sentenceIdx === $sentences.length) {
+                    let $endDate = new Date();
+                    let $endTime = $endDate.valueOf();
+                    let $min = ($endTime - $startTime) / 60000;
+                    //---wpm calculations ----//
+                    $wpm = Math.round(54 / $min -2 * $mistakesNum);
 
+                    //---Use confirm method to display the result and reload page on confirm ---//
+                    
+                    
+                    let confirmAlert = confirm(`You completed the exercise at ${$wpm} words per minute. Try Again?`);
+                    if (confirmAlert === true) {
+                        location.reload();
+                    };
+                }
+                //-------If not at end of sentence array, go to next sentence ---//
+                else {
+                    $sentence = $sentences[$sentenceIdx];
+                    $('#sentence').text($sentence);
+                    //-------reset character for new sentence------//
+                    $charNum = 0;
+                    $charLetter = $sentence.substring($charNum, $charNum + 1);
+                    //-----add next target letter text -------//
+                    $('#target-letter').text($charLetter);
 
+                    //----put highlight block on first letter of new sentence ---//
+                    $highlightPos = 0;
+                    $($highlightBlock).css('margin-left', `${$highlightPos}px`);
+                    //----reset feedback text --------//
+                    $('#feedback').text("");
+                };
+            };
+        }
+        else {
+        //----Else to capture and display mistakes --------//
+        let $incorrectKey = ('<span class="glyphicon glyphicon-remove"></span>');
+        $('#feedback').append($incorrectKey);
+
+        $mistakesNum ++;
         }
     });
 
-})
+});
